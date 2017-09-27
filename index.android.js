@@ -1,50 +1,46 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
   AppRegistry,
   StyleSheet,
-  Text,
-  View,
-  Image,
-  Dimensions,
-  ScrollView,
   FlatList
 } from 'react-native';
-
-const larguraTela = Dimensions.get('screen').width;
+import Post from './src/components/Post'
 
 export default class InstalauraMobile extends Component {
-  render() {
-    const fotos = [{
-      id: 1, usuario: 'lucas'
-    }, {
-      id: 2, usuario: 'matias'
-    }, {
-      id: 3, usuario: 'adams'
-    }];
+  constructor(props) {
+    super(props);
 
+    this.state = {
+      fotos: []
+    }
+  }
+
+  componentDidMount() {
+    fetch('https://instalura-api.herokuapp.com/api/public/fotos/rafael')
+      .then(resp => resp.json())
+      .then(json => this.setState({fotos: json}));
+  }
+
+  render() {
     return (
       <FlatList
-        style={{marginTop: 20}}
-        data={fotos}
+        style={styles.container}
+        data={this.state.fotos}
         keyExtractor={item => item.id}
         renderItem={({item}) =>
-          <View>
-            <Text>{item.usuario}</Text>
-            <Image
-              source={require('./resources/img/cerveja01.jpg')}
-              style={{width: larguraTela, height: larguraTela}}
-            />
-          </View>
+          <Post
+            foto={item}
+          />
         }
       />
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 20
+  }
+});
 
 AppRegistry.registerComponent('InstalauraMobile', () => InstalauraMobile);
